@@ -1,29 +1,21 @@
-<p id="notice"><%= notice %></p>
+<%= link_to 'New Post', new_post_path, class: "btn btn-success" %>
 
-<h1>Posts</h1>
+<div class="page-header"> 
+  <h1> Posts </h1>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Contenido</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+<% @posts.each do |post| %>
 
-  <tbody>
-    <% @posts.each do |post| %>
-      <tr>
-        <td><%= post.nombre %></td>
-        <td><%= post.contenido %></td>
-        <td><%= link_to 'Show', post %></td>
-        <td><%= link_to 'Edit', edit_post_path(post) %></td>
-        <td><%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <div class="post">
+    <strong> <%= post.user.nick %></strong>
+    <p><%= post.contenido %></p>
+    <div> 
+      <%= link_to 'Show', post,  class: "btn btn-info"  %>
+      <span class="admin">
+        <%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
+        <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
+      </span>
+    </div>
+  </div>
 
-<br>
-
-<%= link_to 'New Post', new_post_path %>
+<% end %>
