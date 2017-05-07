@@ -54,3 +54,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise'
 gem 'protected_attributes_continued'
 gem 'simple_form'
+gem 'has_friendship'
+gem 'carrierwave'
+gem 'rolify'
+gem 'acts_as_votable', '~> 0.10.0'

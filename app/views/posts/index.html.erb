@@ -1,21 +1,98 @@
-<%= link_to 'New Post', new_post_path, class: "btn btn-success" %>
-
-<div class="page-header"> 
-  <h1> Posts </h1>
-</div>
-
-<% @posts.each do |post| %>
-
-  <div class="post">
-    <strong> <%= post.user.nick %></strong>
-    <p><%= post.contenido %></p>
-    <div> 
-      <%= link_to 'Show', post,  class: "btn btn-info"  %>
-      <span class="admin">
-        <%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
-        <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
-      </span>
+<% if user_signed_in? %>
+  <div class="page-header"> 
+    <div class="row">
+      <div class="col-lg-3">
+        <h3>Your profile</h3>
+      </div>
+      <div class="col-lg-6">
+        <h3>Timeline</h3>
+      </div>
+      <div class="col-lg-3">
+        <h3>Notifications</h3>
+      </div>
     </div>
   </div>
 
+
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="row">
+        <img class="img-rounded" alt="Cinque Terre" width="304" height="236">
+        <!--AQUI PONER IMAGEN DE PERFIL -->
+      </div>
+      <div class="row">
+        <h3><%= link_to current_user.name + " " + current_user.last_name, current_user %><h3>
+        <h4><%= "@" + current_user.nick %><h4>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <%= link_to 'New Post', new_post_path, class: "btn btn-success" %>
+      <% if !current_user.has_role? :admin %>
+
+        <% @posts = Post.order(created_at: :desc) %>
+        <% @posts.each do |post| %>
+
+          <div class="post">
+            <strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
+            <strong> <%= "  @" + post.user.nick %></strong>
+            <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
+            <p><%= post.contenido %></p>
+            <div>
+              <%= link_to 'Show', post,  class: "btn btn-info"  %>
+              <span class="admin">
+                <% if current_user == post.user %>
+                  <%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
+                  <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
+                <% end %>
+              </span>
+            </div>
+            <div>
+              <%= button_to 'Like', like_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
+            </div>
+            <div>
+              <%= post.votes_for.size %>
+            </div>
+          </div>
+
+        <% end %>
+
+      <% else %>
+        <% @posts = Post.all %>
+        <% @posts.each do |post| %>
+          <div class="post">
+            <strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
+            <strong> <%= "  @" + post.user.nick %></strong>
+            <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
+            <p><%= post.contenido %></p>
+            <div>
+              <%= link_to 'Show', post,  class: "btn btn-info"  %>
+              <span class="admin">
+                <%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
+                <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
+              </span>
+            </div>
+          </div>
+
+        <% end %>
+
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= button_to 'Friends', friend_path,  :class => "btn btn-success", :method => :get %>
+    </div>
+
+<% else %>
+  <div class="jumbotron">
+    <div class="container">
+      <p>First you have to log in!</p>
+      <%= button_to "Log in", login_path, :class => "btn btn-primary btn-lg active", :method => :get %>
+      <p>Is your fist time in this application?</p>
+      <%= button_to "Sign up", signup_path, :class => "btn btn-primary btn-lg active", :method => :get %>
+    </div>
+  </div>
 <% end %>
+
+<script>
+  $('.post').hover(function(){$(this).toggleClass('post_hover');});
+</script>

@@ -1,0 +1,57 @@
+<h1>Manage your friendships</h1>
+
+<% if current_user.requested_friends.any? %>
+  <h2>Frienship request</h2>
+  <div class="friend-request">
+    <% request_friends = current_user.requested_friends %>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>
+            User
+          </th>
+          <th>
+            Accept
+          </th>
+          <th>
+            Decline
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% request_friends.each do |u| %>
+          <tr>
+            <td>
+              <%= u.nick + " " + u.last_name + " (@" + u.nick + ")" %>
+            </td>
+            <td>
+              <%= button_to 'Accept', accept_request_path(:user => u),  :class => "btn btn-success", method: :post %>
+            </td>
+            <td>
+              <%= button_to 'Decline', decline_request_path(:user => u),  :class => "btn btn-danger", method: :post %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<h2>Now you are friend of:</h2>
+  <% current_user.friends.each do |friend| %>
+    <div class="post">
+      <strong><%= link_to friend.name + " " + friend.last_name, friend %></strong>
+      <%= "  @" + friend.nick %>
+    </div>
+  <% end %>
+
+
+<h2>Search new friends</h2>
+<% User.all.each do |user| %>
+  <% if !current_user.friends_with?(user) and current_user != user %>
+    <div class="post">
+      <strong><%= link_to user.name + " " + user.last_name, user %></strong>
+      <%= "  @" + user.nick %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,9 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  nombre: MyString
   contenido: MyString
-
+  user: luis
 two:
-  nombre: MyString
   contenido: MyString
+  user: luis
