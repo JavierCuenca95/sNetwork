@@ -1,46 +1,87 @@
-<div class="page-header">
-	<h1><%= @user.name + " " + @user.last_name%></h1><hr/>
-	<h2><%= "@" + @user.nick %></h2>
+
+<div class="row">
+        <div class="col-lg-9">
+            <h1><%= @user.name + " " + @user.last_name + " (@" + @user.nick + ")"%></h1><hr/>
+        </div>
 </div>
 
-<div>
-<% if current_user != @user %>
-	<% if !current_user.friends_with?(@user) and  !@user.pending_friends.include?(current_user) %>
-		<%= button_to 'Send friendship request', send_request_path(:user => @user),  :class => "btn btn-primary", method: :post %>
-	<% elsif @user.pending_friends.include?(current_user) %>
-		<%= "@" + @user.name + " sent you a friendship request" %>
-	<% else %>
-		<%= @user.name + " " + @user.last_name + " (" + @user.nick + ") is your friend" %>
-		</br>
-		<%= button_to 'Remove friendship', remove_friend_path(:user => @user),  :class => "btn btn-danger", method: :post,data: { confirm: "Are you sure?" } %>
-	<% end %>
-<% end %>
-</div>
-
-<% @posts = @user.posts.all.order(created_at: :desc) %>
-<% @posts.each do |post| %>
-	<div class="post">
-		<strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
-		<strong> <%= "  @" + post.user.nick %></strong>
-        <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
-        <p><%= post.contenido %></p>
-        <div>
-        	<%= link_to 'Show', post,  class: "btn btn-info"  %>
-            <span class="admin">
-            	<% if current_user == post.user %>
-                	<%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
-                	<%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
-                <% end %>
-            </span>
-        </div>
-    	<div>
-    		<%= button_to 'Like', like_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
-    	</div>
-        <div>
-            <%= post.votes_for.size %>
-        </div>
+<% if !@user.has_role? :admin %>
+<div class="row">
+    <div class="col-lg-3">
+    <% if current_user != @user and !current_user.has_role? :admin %>
+    	<% if !current_user.friends_with?(@user) and  !@user.pending_friends.include?(current_user) and  %>
+    		<%= button_to 'Send friendship request', send_request_path(:user => @user),  :class => "btn btn-primary", method: :post %>
+    	<% elsif @user.pending_friends.include?(current_user) %>
+    		<%= "@" + @user.name + " sent you a friendship request" %>
+    	<% else %>
+    		<%= @user.name + " " + @user.last_name + " (" + @user.nick + ") is your friend" %>
+    		</br>
+    		<%= button_to 'Remove friendship', remove_friend_path(:user => @user),  :class => "btn btn-danger", method: :post,data: { confirm: "Are you sure?" } %>
+    	<% end %>
+    <% end %>
     </div>
+</div>
+</br>
 <% end %>
+
+<div class="row">
+    <div class="col-lg-3">
+    <% if @user.avatar.url.present? %>
+          <%= image_tag(@user.avatar.url, class: "round-image-200" )%>
+        <% else %>
+          <%= image_tag('noavatar.png', class: "round-image-200" )%>
+        <% end %>
+    </div>
+    <div class="col-lg-6">
+        <% @posts = @user.posts.all.order(created_at: :desc) %>
+        <% @posts.each do |post| %>
+            <div class="post">
+                <% if post.user.avatar.url.present? %>
+                  <%= image_tag(post.user.avatar.url, class: "round-image-50" )%>
+                <% else %>
+                  <%= image_tag('noavatar.png', class: "round-image-50") %>
+                <% end %>
+                <strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
+                <strong> <%= "  @" + post.user.nick %></strong>
+                <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
+                <p><%= post.contenido %></p>
+                <div> 
+                  <% @images = post.post_attachments.all %>
+                  <% @images.each do |i| %>
+                    <%= image_tag(i.avatar_url, class: "post-image-index" ) %>
+                  <% end %>
+                </div>
+
+                </br>
+                <div>
+                  <%= link_to 'Like', like_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
+                  <%= link_to 'Disike', dislike_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
+                </div>
+                <div>
+                  <%= "Liked by " + post.get_likes.size.to_s + " people" %>
+                </div>
+                 <div>
+                  <%= "Disliked by " + post.get_dislikes.size.to_s + " people" %>
+                </div>
+
+                <div>
+                  <%= link_to 'Show', post,  class: "btn btn-info"  %>
+                  <span class="admin">
+                    <% if current_user == post.user or current_user.has_role? :admin %>
+                      <%= link_to 'Edit', edit_post_path(post),  class: "btn btn-success"  %>
+                      <%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' },  class: "btn btn-danger" %>
+                    <% end %>
+                  </span>
+                </div>
+                
+                </br>
+            
+            </div>
+        <% end %>
+    </div>
+</div>
+
+
 
 <script>
   $('.post').hover(function(){$(this).toggleClass('post_hover');});

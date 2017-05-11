@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
+  resources :post_attachments
   get "/pages/:page" => "pages#show"
-  get 'profile/show'
+
 
   get 'perfil/show'
 
@@ -23,17 +24,26 @@ Rails.application.routes.draw do
   #LIKE/DISLIKE POST
   post '/like_post', to: "posts#likePost", as: :like_post
   post '/dislike_post', to: "posts#dislikePost", as: :dislike_post
+  post '/mark_notification', to: "interactions#markNotificationRead", as: :mark_notification
 
 
   resources :posts
   get 'timeline', to: 'posts#index', as: :timeline
 
-  get '/:id', to: 'profile#show'
+  get '/about', :to => redirect('/about.html.erb')
+
 
   resources :users, :only => [:show]
 
 
   get 'friend/show', to: 'friend#show', as: :friend
+
+  get 'interactions/show', to: 'interactions#show', as: :interactions
+
+  Rails.application.routes.draw do
+  resources :post_attachments
+    get "/pages/:page" => "pages#show"
+  end
   #root to: 'posts#index'
   root "pages#show", page: "home"
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

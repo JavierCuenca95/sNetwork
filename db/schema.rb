@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170507094035) do
+ActiveRecord::Schema.define(version: 20170510154950) do
 
   create_table "friendships", force: :cascade do |t|
     t.string   "friendable_type"
@@ -20,6 +20,26 @@ ActiveRecord::Schema.define(version: 20170507094035) do
     t.datetime "updated_at"
     t.integer  "blocker_id"
     t.integer  "status"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "notified_by_id"
+    t.integer  "post_id"
+    t.string   "type_notification"
+    t.boolean  "read",              default: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.index ["notified_by_id"], name: "index_notifications_on_notified_by_id"
+    t.index ["post_id"], name: "index_notifications_on_post_id"
+    t.index ["user_id"], name: "index_notifications_on_user_id"
+  end
+
+  create_table "post_attachments", force: :cascade do |t|
+    t.integer  "post_id"
+    t.string   "avatar"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "posts", force: :cascade do |t|
@@ -56,6 +76,7 @@ ActiveRecord::Schema.define(version: 20170507094035) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "avatar"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

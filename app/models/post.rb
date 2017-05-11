@@ -7,4 +7,10 @@ class Post < ApplicationRecord
 
 	resourcify
 	acts_as_votable
+
+
+	has_many :post_attachments
+   	accepts_nested_attributes_for :post_attachments
+
+   	has_many :notifications, dependent: :destroy 
 end

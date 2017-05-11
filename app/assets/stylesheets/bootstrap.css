@@ -12,6 +12,17 @@ html {
 body {
   margin: 0;
 }
+.initialbody{
+  background-image: url(slide-03.jpeg);
+  background-repeat: no-repeat ;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  color: white;
+}
 article,
 aside,
 details,
@@ -4961,7 +4972,7 @@ a.badge:focus {
   padding-bottom: 30px;
   margin-bottom: 30px;
   color: inherit;
-  background-color: #eee;
+  background-color: rgba(0,0,0,0.7);
 }
 .jumbotron h1,
 .jumbotron .h1 {

@@ -1,10 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body class="initialbody">
 <div class="jumbotron">
       <div class="container">
-      	<h1 class="display-3">Welcome to sNetwork</h1>
-        <p>sNetwork is a social network developed by Luis Palencia Del Campo and Javier Cuenca Rodriguez-Osorio. This social network is developed in the practices of Web Systems Development, a subject teached at ESI. </p>  
-        <p>Do you have an account?</p>
-  		<%= button_to "Log in", login_path, :class => "btn btn-primary btn-lg active", :method => :get %>
-  		<p>Is your fist time in this application?</p>
-  		<%= button_to "Sign up", signup_path, :class => "btn btn-primary btn-lg active", :method => :get %>
-    </div>
+        <div class="row">
+          <h1 class="display-3">Welcome to sNetwork</h1>
+        </div>
+
+        <div class="row">
+          <p></p> 
+        </div>
+         
+        <div class="row">
+          <div class="col-lg-4">
+            <p>Do you have an account in sNetwork?</p>
+          </div>
+            <div class="col-lg-4">
+            <p>Is your fist time in this application?</p>
+          </div>
+      </div>
+      <div class="row" opacity=1.0>
+          <div class="col-lg-4" align="center center">
+            <%= button_to "Log in", login_path, :class => "btn btn-primary btn-lg active", :method => :get %>
+          </div>
+            <div class="col-lg-4" align="center center">
+          <%= button_to "Sign up", signup_path, :class => "btn btn-primary btn-lg active", :method => :get %>
+          </div>
+      </div>
+  </div>
 </div>
+</body>
+</html>

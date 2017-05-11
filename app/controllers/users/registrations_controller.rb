@@ -78,6 +78,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def acceptRequest
     @user = User.find(params[:user])
     current_user.accept_request(@user)
+    #Notification.create(user_id: @user.id,
+                        #notified_by_id: current_user.id,
+                        #type_notification: 'friendRequestAccepted')
+
+    n = Notification.new
+
+    n.user_id = @user.id
+    n.notified_by_id = current_user.id
+    n.type_notification = 'friendRequestAccepted'
+    n.save
     redirect_to timeline_path, :notice => "Now " + @user.nick + " and you are friends!"
   end
 

@@ -1,0 +1,106 @@
+<h1>Your notifications</h1>
+
+<% notifications = Notification.where(:user_id => current_user.id, :read => false).order(created_at: :desc) %>
+
+<% if notifications.any? %>
+  <h2>New notifications</h2>
+  <div class="friend-request">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>
+            User
+          </th>
+          <th>
+            Description
+          </th>
+          <th>
+            Time
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% notifications.each do |n| %>
+          <% if n.read == false %>
+            <% u = User.find_by_id(n.notified_by_id) %>
+            <tr>
+              <td>
+                <%= u.nick + " " +  u.last_name + " (@" +  u.nick + ")" %>
+              </td>
+              <td>
+                <% if n.type_notification == 'postTag' %>
+                  <%= "This friend has mentioned you in a post" %>
+                <% else %>
+                  <%= "Now you and this user are friends" %>
+                <% end %>
+              </td>
+              <td>
+                <% if n.type_notification == 'postTag' %>
+                  <% post = Post.find_by_id(n.post_id) %>
+                  <%= link_to time_ago_in_words(post.created_at), post_path(post) %>
+                <% else %>
+                  <%= link_to u.name + " " + u.last_name, u %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% notifications_read = Notification.where(:user_id => current_user.id, :read => true).order(created_at: :desc) %>
+
+<% if notifications_read.any? %>
+  <h2>Old notifications</h2>
+  <div class="friend-request">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>
+            User
+          </th>
+          <th>
+            Description
+          </th>
+          <th>
+            Time
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% notifications_read.each do |n| %>
+          <% if n.read == true %>
+            <% u = User.find_by_id(n.notified_by_id) %>
+            <tr>
+              <td>
+                <%= u.nick + " " +  u.last_name + " (@" +  u.nick + ")" %>
+              </td>
+              <td>
+                <% if n.type_notification == 'postTag' %>
+                  <%= "This friend has mentioned you in a post" %>
+                <% else %>
+                  <%= "Now you and this user are friends" %>
+                <% end %>
+              </td>
+              <td>
+                <% if n.type_notification == 'postTag' %>
+                  <% post = Post.find_by_id(n.post_id) %>
+                  <%= link_to time_ago_in_words(post.created_at), post_path(post) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% notifications.each do |n| %>
+  <% if n.read == false %>
+    <% n.read = true %>
+    <% n.save %>
+  <% end %>
+<% end %>

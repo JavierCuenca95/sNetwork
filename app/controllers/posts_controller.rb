@@ -15,11 +15,13 @@ class PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
+    @post_attachments = @post.post_attachments.all
   end
 
   # GET /posts/new
   def new
     @post = Post.new
+    @post_attachment = @post.post_attachments.build
   end
 
   # GET /posts/1/edit
@@ -45,6 +47,14 @@ class PostsController < ApplicationController
       @post.user = current_user
       respond_to do |format|
         if @post.save
+          notifyTagUsers(@post)
+
+          if params.has_key?(:post_attachments)
+            params[:post_attachments]['avatar'].each do |a|
+              @post_attachment = @post.post_attachments.create!(:avatar => a)
+            end
+          end
+
           format.html { redirect_to timeline_path, notice: 'Post was successfully created.' }
           format.json { render :show, status: :created, location: @post }
         else
@@ -74,6 +84,7 @@ class PostsController < ApplicationController
   def update
     respond_to do |format|
       if @post.update(post_params)
+
         #format.html { redirect_to @post, notice: 'Post was successfully updated.' }
         format.html { redirect_to timeline_path, notice: 'Post was successfully updated.' }
         format.json { render :show, status: :ok, location: @post }
@@ -118,6 +129,25 @@ class PostsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
-      params.require(:post).permit(:user_id, :contenido)
+      params.require(:post).permit(:user_id, :contenido,  post_attachments_attributes: [:id, :post_id, :avatar])
+    end
+
+    def notifyTagUsers(post)
+      values = post.contenido.split(" ")
+
+      # Display each value to the console.
+      values.each do |value|
+        if value[0] == '@' 
+          value1 = value[1..-1]
+          u = User.find_by_nick(value1)
+
+          if u and current_user.friends_with?(u)
+            Notification.create(user_id: u.id,
+                        notified_by_id: current_user.id,
+                        post_id: post.id,
+                        type_notification: 'postTag')
+          end
+        end
+      end
     end
 end

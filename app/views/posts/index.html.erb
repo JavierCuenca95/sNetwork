@@ -8,7 +8,7 @@
         <h3>Timeline</h3>
       </div>
       <div class="col-lg-3">
-        <h3>Notifications</h3>
+        <h3>Notifications & Friends</h3>
       </div>
     </div>
   </div>
@@ -17,7 +17,11 @@
   <div class="row">
     <div class="col-lg-3">
       <div class="row">
-        <img class="img-rounded" alt="Cinque Terre" width="304" height="236">
+        <% if current_user.avatar.url.present? %>
+          <%= image_tag(current_user.avatar.url, class: "round-image-200" )%>
+        <% else %>
+          <%= image_tag('noavatar.png', class: "round-image-200" )%>
+        <% end %>
         <!--AQUI PONER IMAGEN DE PERFIL -->
       </div>
       <div class="row">
@@ -27,16 +31,44 @@
     </div>
     <div class="col-lg-6">
       <%= link_to 'New Post', new_post_path, class: "btn btn-success" %>
+      </br>
+      </br>
       <% if !current_user.has_role? :admin %>
 
-        <% @posts = Post.order(created_at: :desc) %>
+        <% @posts = current_user.getPosts2 %>
+        <!--% @posts = Post.order(created_at: :desc) %-->
+
         <% @posts.each do |post| %>
 
           <div class="post">
+            <% if post.user.avatar.url.present? %>
+              <%= image_tag(post.user.avatar.url, class: "round-image-50" )%>
+            <% else %>
+              <%= image_tag('noavatar.png', class: "round-image-50") %>
+            <% end %>
             <strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
             <strong> <%= "  @" + post.user.nick %></strong>
             <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
             <p><%= post.contenido %></p>
+            <div> 
+              <% @images = post.post_attachments.all %>
+              <% @images.each do |i| %>
+                <%= image_tag(i.avatar_url, class: "post-image-index" ) %>
+              <% end %>
+            </div>
+
+            </br>
+            <div>
+              <%= link_to 'Like', like_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
+              <%= link_to 'Disike', dislike_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
+            </div>
+            <div>
+              <%= "Liked by " + post.get_likes.size.to_s + " people" %>
+            </div>
+             <div>
+              <%= "Disliked by " + post.get_dislikes.size.to_s + " people" %>
+            </div>
+
             <div>
               <%= link_to 'Show', post,  class: "btn btn-info"  %>
               <span class="admin">
@@ -46,24 +78,38 @@
                 <% end %>
               </span>
             </div>
-            <div>
-              <%= button_to 'Like', like_post_path(:post => post),  :class => "btn btn-primary", method: :post %>
-            </div>
-            <div>
-              <%= post.votes_for.size %>
-            </div>
+            
+            </br>
+            
           </div>
 
         <% end %>
 
       <% else %>
-        <% @posts = Post.all %>
+        <% @posts = Post.order(created_at: :desc) %>
         <% @posts.each do |post| %>
           <div class="post">
+            <% if post.user.avatar.url.present? %>
+              <%= image_tag(post.user.avatar.url, class: "round-image-50" )%>
+            <% else %>
+              <%= image_tag('noavatar.png', class: "round-image-50") %>
+            <% end %>
             <strong><%= link_to post.user.name + " " + post.user.last_name, post.user %></strong>
             <strong> <%= "  @" + post.user.nick %></strong>
             <%= link_to time_ago_in_words(post.created_at), post_path(post)%>
             <p><%= post.contenido %></p>
+            <div> 
+              <% @images = post.post_attachments.all %>
+              <% @images.each do |i| %>
+                <%= image_tag(i.avatar_url, class: "post-image-index" ) %>
+              <% end %>
+            </div>
+
+            </br>
+            <div>
+              <%= "Liked by " + post.votes_for.size.to_s + " people" %>
+            </div>
+
             <div>
               <%= link_to 'Show', post,  class: "btn btn-info"  %>
               <span class="admin">
@@ -79,6 +125,20 @@
     </div>
 
     <div class="col-lg-3">
+      <% if Notification.where(:user_id => current_user.id, :read => false).any? %>
+        <strong>You have at least new notifications!</strong>
+      <% else %>
+        <%= "See your notifications" %>
+      <% end %>
+
+      <%= button_to 'Notifications', interactions_path,  :class => "btn btn-success", :method => :get %>
+      </br>
+
+      <% if current_user.requested_friends.any? %>
+        <strong>You have at least one friendship request!</strong>
+      <% else %>
+        <%= "Manage your friendships" %>
+      <% end %>
       <%= button_to 'Friends', friend_path,  :class => "btn btn-success", :method => :get %>
     </div>
 

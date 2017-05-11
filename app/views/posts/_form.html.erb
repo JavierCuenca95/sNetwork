@@ -1,4 +1,4 @@
-<%= simple_form_for(post, html: {class: "form-horizontal"}) do |f| %>
+<%= simple_form_for(post, html: {class: "form-horizontal", class: "row", class: "col-md-6", :multipart => true}) do |f| %>
   <% if post.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
@@ -14,6 +14,13 @@
   
   <!--%= f.input :user_id , collection: User.all, label_method: :nick%-->
   <%= f.input :contenido %>
+
+  <%= f.fields_for :post_attachments do |p| %>
+    <div class="field">
+      <%= p.label :avatar %><br>
+      <%= p.file_field :avatar, :multiple => true, name: "post_attachments[avatar][]" %>
+    </div>
+  <% end %>
 
 
   <div class="form-actions">
